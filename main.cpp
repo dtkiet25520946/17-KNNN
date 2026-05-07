@@ -75,6 +75,11 @@ char blocks[][4][4] = {
          {' ',' ',' ',' '}}
 };
 
+void UpdateSpeed(){
+    Speed = Speed - (lineCleared * 3); // tang toc do roi
+    if(Speed<75) Speed = 75; // gioi han
+}
+
 int x=4,y=0,b=1;
 void gotoxy(int x, int y) {
     COORD c = {x, y};
