@@ -5,6 +5,8 @@
 using namespace std;
 #define H 20
 #define W 15
+int Speed = 200; // Toc do ban dau
+int lineCleared = 0; // Hang da xoa
 char board[H][W] = {} ;
 char blocks[][4][4] = {
         {{' ','I',' ',' '},
@@ -112,30 +114,6 @@ bool canMove(int dx, int dy){
                 if ( board[ty][tx] != ' ') return false;
             }
     return true;
-}
-
-// ham cap nhat toc do
-int Speed = 200; // bien toc do ban dau
-int lineCleared = 0; // bien dem line
-void updateSpeed(int line){
-    Speed = Speed - (lineCleared * 5);
-    if(Speed<50) Speed = 50; // gioi han toc do roi
-}
-
-void removeLine(){
-    int j;
-    for (int i = H-2; i >0 ; i-- ){
-        for (j = 0; j < W-1 ; j++)
-            if (board[i][j] == ' ') break;
-        if (j == W-1){
-            lineCleared++; // tang so hang
-            updateSpeed(lineCleared); // tang toc do
-            for (int ii = i; ii >0 ; ii-- )
-                for (int j = 0; j < W-1 ; j++ ) board[ii][j] = board[ii-1][j];
-            i++;
-            draw();
-        }
-    }
 }
 
 int main()
