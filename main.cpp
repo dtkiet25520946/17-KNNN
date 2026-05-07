@@ -74,7 +74,11 @@ char blocks[][4][4] = {
 
 int x=4,y=0,b=1;
 void gotoxy(int x, int y) {
+<<<<<<< HEAD
     COORD c = {(SHORT)x, (SHORT)y};
+=======
+    COORD c = {x, y};
+>>>>>>> nhunguyet-tuan2
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 void boardDelBlock(){
@@ -98,8 +102,23 @@ void initBoard(){
 void draw(){
     gotoxy(0,0);
     for (int i = 0 ; i < H ; i++, cout<<endl)
+<<<<<<< HEAD
         for (int j = 0 ; j < W ; j++)
             cout<<board[i][j];
+=======
+        for (int j = 0 ; j < W ; j++){
+            if(board[i][j]==' '){
+                cout<<"  ";
+            }
+            else if(board[i][j]=='#'){
+                cout<<(char)178<<(char)178;
+            }
+            else{
+                cout<<(char)219<<(char)219;
+            }
+        }
+
+>>>>>>> nhunguyet-tuan2
 }
 bool canMove(int dx, int dy){
     for (int i = 0 ; i < 4 ; i++)
@@ -112,7 +131,24 @@ bool canMove(int dx, int dy){
             }
     return true;
 }
+<<<<<<< HEAD
 
+=======
+void removeLine(){
+    int j;
+    for (int i = H-2; i >0 ; i-- ){
+        for (j = 0; j < W-1 ; j++)
+            if (board[i][j] == ' ') break;
+        if (j == W-1){
+            for (int ii = i; ii >0 ; ii-- )
+                for (int j = 0; j < W-1 ; j++ ) board[ii][j] = board[ii-1][j];
+            i++;
+            draw();
+            _sleep(200);
+        }
+    }
+}
+>>>>>>> nhunguyet-tuan2
 
 int main()
 {
@@ -140,4 +176,8 @@ int main()
         _sleep(200);
     }
     return 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> nhunguyet-tuan2
