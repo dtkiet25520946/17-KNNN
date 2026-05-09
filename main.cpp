@@ -185,6 +185,7 @@ int main()
         block2Board();
         draw();
         _sleep(200);
+        Sleep(Speed);
     }
     return 0;
 <<<<<<< HEAD
