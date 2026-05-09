@@ -139,27 +139,33 @@ bool canMove(int dx, int dy){
             }
     return true;
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-void removeLine(){
-    int j;
-    for (int i = H-2; i >0 ; i-- ){
-        for (j = 0; j < W-1 ; j++)
+void removeLine() {
+    int clearedThisTurn = 0;
+
+    for (int i = H - 2; i > 0; i--) {
+        int j;
+        for (j = 1; j < W - 1; j++)
             if (board[i][j] == ' ') break;
-        if (j == W-1){
-            for (int ii = i; ii >0 ; ii-- )
-                for (int j = 0; j < W-1 ; j++ ) board[ii][j] = board[ii-1][j];
+
+        if (j == W - 1) {
+            clearedThisTurn++;
+
+            for (int ii = i; ii > 0; ii--)
+                for (int col = 1; col < W - 1; col++)
+                    board[ii][col] = board[ii - 1][col];
+
             i++;
-            draw();
-            _sleep(200);
         }
     }
+
+    if (clearedThisTurn > 0) {
+        lineCleared += clearedThisTurn;
+        UpdateSpeed();
+        draw();
+        Sleep(200);
+    }
 }
->>>>>>> nhunguyet-tuan2
-=======
->>>>>>> origin/update_speed
 
 int main()
 {
