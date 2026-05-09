@@ -1,9 +1,12 @@
 #include <iostream>
 #include <conio.h>
+#include <ctime>
 #include <windows.h>
 using namespace std;
 #define H 20
 #define W 15
+int Speed = 200; // Toc do ban dau
+int lineCleared = 0; // Hang da xoa
 char board[H][W] = {} ;
 char blocks[][4][4] = {
         {{' ','I',' ',' '},
@@ -72,6 +75,11 @@ char blocks[][4][4] = {
          {' ',' ',' ',' '}}
 };
 
+void UpdateSpeed(){
+    Speed = Speed - (lineCleared * 3); // tang toc do roi
+    if(Speed<75) Speed = 75; // gioi han
+}
+
 int x=4,y=0,b=1;
 void gotoxy(int x, int y) {
 <<<<<<< HEAD
@@ -132,6 +140,7 @@ bool canMove(int dx, int dy){
     return true;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 void removeLine(){
@@ -149,6 +158,8 @@ void removeLine(){
     }
 }
 >>>>>>> nhunguyet-tuan2
+=======
+>>>>>>> origin/update_speed
 
 int main()
 {
