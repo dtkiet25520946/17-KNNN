@@ -5,70 +5,42 @@
 using namespace std;
 #define H 20
 #define W 15
-int Speed = 200; // Toc do ban dau
-int lineCleared = 0; // Hang da xoa
+int Speed = 200;
+int lineCleared = 0;
 char board[H][W] = {} ;
+
 char blocks[][4][4] = {
+    
         {{' ','I',' ',' '},
          {' ','I',' ',' '},
          {' ','I',' ',' '},
          {' ','I',' ',' '}},
-        {{' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '}},
+    
         {{' ',' ',' ',' '},
          {' ','O','O',' '},
          {' ','O','O',' '},
          {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {'I','I','I','I'},
-         {' ',' ',' ',' '},
-         {' ',' ',' ',' '}},
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
+    
         {{' ',' ',' ',' '},
          {' ','T',' ',' '},
          {'T','T','T',' '},
          {' ',' ',' ',' '}},
+    
         {{' ',' ',' ',' '},
          {' ','S','S',' '},
          {'S','S',' ',' '},
          {' ',' ',' ',' '}},
+    
         {{' ',' ',' ',' '},
          {'Z','Z',' ',' '},
          {' ','Z','Z',' '},
          {' ',' ',' ',' '}},
+        
         {{' ',' ',' ',' '},
          {'J',' ',' ',' '},
          {'J','J','J',' '},
          {' ',' ',' ',' '}},
+
         {{' ',' ',' ',' '},
          {' ',' ','L',' '},
          {'L','L','L',' '},
@@ -76,14 +48,14 @@ char blocks[][4][4] = {
 };
 
 void UpdateSpeed(){
-    Speed = Speed - (lineCleared * 3); // tang toc do roi
-    if(Speed<75) Speed = 75; // gioi han
+    Speed = Speed - (lineCleared * 3);
+    if(Speed<75) Speed = 75;
 }
 
 int x=4,y=0,b=1;
+
 void gotoxy(int x, int y) {
     COORD c = {(SHORT)x, (SHORT)y};
-
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 void boardDelBlock(){
@@ -106,20 +78,12 @@ void initBoard(){
 }
 void draw(){
     gotoxy(0,0);
-    for (int i = 0 ; i < H ; i++){
+    for (int i = 0 ; i < H ; i++, cout<<endl)
         for (int j = 0 ; j < W ; j++){
-            if(board[i][j]==' '){
-                cout<<"  ";
-            }
-            else if(board[i][j]=='#'){
-                cout<<(char)178<<(char)178;
-            }
-            else{
-                cout<<(char)219<<(char)219;
-            }
+            if(board[i][j]==' ')       cout<<"  ";
+            else if(board[i][j]=='#')  cout<<(char)178<<(char)178;
+            else                       cout<<(char)219<<(char)219;
         }
-        cout<<endl;
-    }
 }
 bool canMove(int dx, int dy){
     for (int i = 0 ; i < 4 ; i++)
@@ -132,69 +96,41 @@ bool canMove(int dx, int dy){
             }
     return true;
 }
-
-void rotateBlock()
-{
+void rotateBlock(){
     char temp[4][4];
     for (int i = 0; i < 4; i++)
-    {
         for (int j = 0; j < 4; j++)
-        {
             temp[j][3 - i] = blocks[b][i][j];
-        }
-    }
-
     bool canRotate = true;
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            if (temp[i][j] != ' ')
-            {
-                int tx = x + j;
-                int ty = y + i;
-                if (tx < 1 || tx >= W - 1 || ty >= H - 1 || board[ty][tx] != ' ')
-                {
-                    canRotate = false;
-                    break;
-                }
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < 4; j++){
+            if (temp[i][j] != ' '){
+                int tx = x + j, ty = y + i;
+                if (tx<1||tx>=W-1||ty>=H-1||board[ty][tx]!=' ')
+                { canRotate = false; break; }
             }
         }
-        if (!canRotate)
-            break;
+        if (!canRotate) break;
     }
-
     if (canRotate)
-    {
         for (int i = 0; i < 4; i++)
-        {
             for (int j = 0; j < 4; j++)
-            {
                 blocks[b][i][j] = temp[i][j];
-            }
-        }
-    }
 }
-
 void removeLine() {
     int clearedThisTurn = 0;
-
     for (int i = H - 2; i > 0; i--) {
         int j;
         for (j = 1; j < W - 1; j++)
             if (board[i][j] == ' ') break;
-
         if (j == W - 1) {
             clearedThisTurn++;
-
             for (int ii = i; ii > 0; ii--)
                 for (int col = 1; col < W - 1; col++)
                     board[ii][col] = board[ii - 1][col];
-
             i++;
         }
     }
-
     if (clearedThisTurn > 0) {
         lineCleared += clearedThisTurn;
         UpdateSpeed();
@@ -203,8 +139,7 @@ void removeLine() {
     }
 }
 
-int main()
-{
+int main(){
     srand(time(0));
     b = rand() % 7;
     system("cls");
@@ -216,7 +151,7 @@ int main()
             if (c=='a' && canMove(-1,0)) x--;
             if (c=='d' && canMove(1,0) ) x++;
             if (c=='x' && canMove(0,1))  y++;
-            if (c == 'w') rotateBlock(); // Rotate block
+            if (c == 'w') rotateBlock();
             if (c=='q') break;
         }
         if (canMove(0,1)) y++;
@@ -227,7 +162,6 @@ int main()
         }
         block2Board();
         draw();
-        _sleep(200);
         Sleep(Speed);
     }
     return 0;
