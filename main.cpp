@@ -106,11 +106,7 @@ void initBoard(){
 }
 void draw(){
     gotoxy(0,0);
-    for (int i = 0 ; i < H ; i++, cout<<endl)
-<<<<<<< HEAD
-        for (int j = 0 ; j < W ; j++)
-            cout<<board[i][j];
-=======
+    for (int i = 0 ; i < H ; i++){
         for (int j = 0 ; j < W ; j++){
             if(board[i][j]==' '){
                 cout<<"  ";
@@ -122,8 +118,8 @@ void draw(){
                 cout<<(char)219<<(char)219;
             }
         }
-
->>>>>>> nhunguyet-tuan2
+        cout<<endl;
+    }
 }
 bool canMove(int dx, int dy){
     for (int i = 0 ; i < 4 ; i++)
@@ -235,8 +231,4 @@ int main()
         Sleep(Speed);
     }
     return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> nhunguyet-tuan2
