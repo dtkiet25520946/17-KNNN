@@ -81,6 +81,131 @@ protected:
         memcpy(shape, temp, sizeof(shape));
     }
 };
+class IPiece : public Piece {
+public:
+    IPiece() {
+        char s[4][4] = {
+            {' ','I',' ',' '},{' ','I',' ',' '},
+            {' ','I',' ',' '},{' ','I',' ',' '}
+        };
+        memcpy(shape, s, sizeof(s));
+    }
+    char symbol() override { return 'I'; }
+    void rotate() override {
+        char temp[4][4];
+        bool isVertical = (shape[0][1] == 'I');
+        if (isVertical) {
+            char s[4][4] = {
+                {' ',' ',' ',' '},{'I','I','I','I'},
+                {' ',' ',' ',' '},{' ',' ',' ',' '}
+            };
+            memcpy(temp, s, sizeof(s));
+        } else {
+            char s[4][4] = {
+                {' ','I',' ',' '},{' ','I',' ',' '},
+                {' ','I',' ',' '},{' ','I',' ',' '}
+            };
+            memcpy(temp, s, sizeof(s));
+        }
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                if (temp[i][j] != ' ') {
+                    int tx = x+j, ty = y+i;
+                    if (tx<1||tx>=W-1||ty>=H-1||board[ty][tx]!=' ') return;
+                }
+        memcpy(shape, temp, sizeof(temp));
+    }
+};
+
+class OPiece : public Piece {
+public:
+    OPiece() {
+        char s[4][4] = {
+            {' ',' ',' ',' '},{' ','O','O',' '},
+            {' ','O','O',' '},{' ',' ',' ',' '}
+        };
+        memcpy(shape, s, sizeof(s));
+    }
+    char symbol() override { return 'O'; }
+    void rotate() override {}
+};
+
+class TPiece : public Piece {
+public:
+    TPiece() {
+        char s[4][4] = {
+            {' ',' ',' ',' '},{' ','T',' ',' '},
+            {'T','T','T',' '},{' ',' ',' ',' '}
+        };
+        memcpy(shape, s, sizeof(s));
+    }
+    char symbol() override { return 'T'; }
+    void rotate() override { rotateClockwise(); }
+};
+
+class SPiece : public Piece {
+public:
+    SPiece() {
+        char s[4][4] = {
+            {' ',' ',' ',' '},{' ','S','S',' '},
+            {'S','S',' ',' '},{' ',' ',' ',' '}
+        };
+        memcpy(shape, s, sizeof(s));
+    }
+    char symbol() override { return 'S'; }
+    void rotate() override { rotateClockwise(); }
+};
+
+class ZPiece : public Piece {
+public:
+    ZPiece() {
+        char s[4][4] = {
+            {' ',' ',' ',' '},{'Z','Z',' ',' '},
+            {' ','Z','Z',' '},{' ',' ',' ',' '}
+        };
+        memcpy(shape, s, sizeof(s));
+    }
+    char symbol() override { return 'Z'; }
+    void rotate() override { rotateClockwise(); }
+};
+
+class JPiece : public Piece {
+public:
+    JPiece() {
+        char s[4][4] = {
+            {' ',' ',' ',' '},{'J',' ',' ',' '},
+            {'J','J','J',' '},{' ',' ',' ',' '}
+        };
+        memcpy(shape, s, sizeof(s));
+    }
+    char symbol() override { return 'J'; }
+    void rotate() override { rotateClockwise(); }
+};
+
+class LPiece : public Piece {
+public:
+    LPiece() {
+        char s[4][4] = {
+            {' ',' ',' ',' '},{' ',' ','L',' '},
+            {'L','L','L',' '},{' ',' ',' ',' '}
+        };
+        memcpy(shape, s, sizeof(s));
+    }
+    char symbol() override { return 'L'; }
+    void rotate() override { rotateClockwise(); }
+};
+
+Piece* createRandomPiece() {
+    switch (rand() % 7) {
+        case 0: return new IPiece();
+        case 1: return new OPiece();
+        case 2: return new TPiece();
+        case 3: return new SPiece();
+        case 4: return new ZPiece();
+        case 5: return new JPiece();
+        default: return new LPiece();
+    }
+}
 int x=4,y=0,b=1;
 
 void gotoxy(int x, int y) {
