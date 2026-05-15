@@ -51,7 +51,36 @@ void UpdateSpeed(){
     Speed = Speed - (lineCleared * 3);
     if(Speed<75) Speed = 75;
 }
+class Piece {
+public:
+    char shape[4][4];
+    int x, y;
 
+    Piece() : x(4), y(0) {
+        memset(shape, ' ', sizeof(shape));
+    }
+
+    virtual void rotate() = 0;
+    virtual char symbol() = 0;
+    virtual ~Piece() {}
+
+protected:
+    void rotateClockwise() {
+        char temp[4][4];
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                temp[j][3 - i] = shape[i][j];
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                if (temp[i][j] != ' ') {
+                    int tx = x + j, ty = y + i;
+                    if (tx < 1 || tx >= W-1 || ty >= H-1 || board[ty][tx] != ' ')
+                        return;
+                }
+        memcpy(shape, temp, sizeof(shape));
+    }
+};
 int x=4,y=0,b=1;
 
 void gotoxy(int x, int y) {
