@@ -9,78 +9,35 @@ int Speed = 200;
 int lineCleared = 0;
 char board[H][W] = {} ;
 
-char blocks[][4][4] = {
-    
-        {{' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '},
-         {' ','I',' ',' '}},
-    
-        {{' ',' ',' ',' '},
-         {' ','O','O',' '},
-         {' ','O','O',' '},
-         {' ',' ',' ',' '}},
-    
-        {{' ',' ',' ',' '},
-         {' ','T',' ',' '},
-         {'T','T','T',' '},
-         {' ',' ',' ',' '}},
-    
-        {{' ',' ',' ',' '},
-         {' ','S','S',' '},
-         {'S','S',' ',' '},
-         {' ',' ',' ',' '}},
-    
-        {{' ',' ',' ',' '},
-         {'Z','Z',' ',' '},
-         {' ','Z','Z',' '},
-         {' ',' ',' ',' '}},
-        
-        {{' ',' ',' ',' '},
-         {'J',' ',' ',' '},
-         {'J','J','J',' '},
-         {' ',' ',' ',' '}},
-
-        {{' ',' ',' ',' '},
-         {' ',' ','L',' '},
-         {'L','L','L',' '},
-         {' ',' ',' ',' '}}
-};
-
 void UpdateSpeed(){
     Speed = Speed - (lineCleared * 3);
     if(Speed<75) Speed = 75;
 }
+
 class Piece {
 public:
     char shape[4][4];
     int x, y;
-
-    Piece() : x(4), y(0) {
-        memset(shape, ' ', sizeof(shape));
-    }
-
+    Piece() : x(4), y(0) { memset(shape, ' ', sizeof(shape)); }
     virtual void rotate() = 0;
     virtual char symbol() = 0;
     virtual ~Piece() {}
-
 protected:
     void rotateClockwise() {
         char temp[4][4];
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
-                temp[j][3 - i] = shape[i][j];
-
+                temp[j][3-i] = shape[i][j];
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
                 if (temp[i][j] != ' ') {
-                    int tx = x + j, ty = y + i;
-                    if (tx < 1 || tx >= W-1 || ty >= H-1 || board[ty][tx] != ' ')
-                        return;
+                    int tx=x+j, ty=y+i;
+                    if (tx<1||tx>=W-1||ty>=H-1||board[ty][tx]!=' ') return;
                 }
         memcpy(shape, temp, sizeof(shape));
     }
 };
+
 class IPiece : public Piece {
 public:
     IPiece() {
@@ -95,100 +52,70 @@ public:
         char temp[4][4];
         bool isVertical = (shape[0][1] == 'I');
         if (isVertical) {
-            char s[4][4] = {
-                {' ',' ',' ',' '},{'I','I','I','I'},
-                {' ',' ',' ',' '},{' ',' ',' ',' '}
-            };
+            char s[4][4] = {{' ',' ',' ',' '},{'I','I','I','I'},{' ',' ',' ',' '},{' ',' ',' ',' '}};
             memcpy(temp, s, sizeof(s));
         } else {
-            char s[4][4] = {
-                {' ','I',' ',' '},{' ','I',' ',' '},
-                {' ','I',' ',' '},{' ','I',' ',' '}
-            };
+            char s[4][4] = {{' ','I',' ',' '},{' ','I',' ',' '},{' ','I',' ',' '},{' ','I',' ',' '}};
             memcpy(temp, s, sizeof(s));
         }
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
                 if (temp[i][j] != ' ') {
-                    int tx = x+j, ty = y+i;
+                    int tx=x+j, ty=y+i;
                     if (tx<1||tx>=W-1||ty>=H-1||board[ty][tx]!=' ') return;
                 }
         memcpy(shape, temp, sizeof(temp));
     }
 };
-
 class OPiece : public Piece {
 public:
     OPiece() {
-        char s[4][4] = {
-            {' ',' ',' ',' '},{' ','O','O',' '},
-            {' ','O','O',' '},{' ',' ',' ',' '}
-        };
+        char s[4][4] = {{' ',' ',' ',' '},{' ','O','O',' '},{' ','O','O',' '},{' ',' ',' ',' '}};
         memcpy(shape, s, sizeof(s));
     }
     char symbol() override { return 'O'; }
     void rotate() override {}
 };
-
 class TPiece : public Piece {
 public:
     TPiece() {
-        char s[4][4] = {
-            {' ',' ',' ',' '},{' ','T',' ',' '},
-            {'T','T','T',' '},{' ',' ',' ',' '}
-        };
+        char s[4][4] = {{' ',' ',' ',' '},{' ','T',' ',' '},{'T','T','T',' '},{' ',' ',' ',' '}};
         memcpy(shape, s, sizeof(s));
     }
     char symbol() override { return 'T'; }
     void rotate() override { rotateClockwise(); }
 };
-
 class SPiece : public Piece {
 public:
     SPiece() {
-        char s[4][4] = {
-            {' ',' ',' ',' '},{' ','S','S',' '},
-            {'S','S',' ',' '},{' ',' ',' ',' '}
-        };
+        char s[4][4] = {{' ',' ',' ',' '},{' ','S','S',' '},{'S','S',' ',' '},{' ',' ',' ',' '}};
         memcpy(shape, s, sizeof(s));
     }
     char symbol() override { return 'S'; }
     void rotate() override { rotateClockwise(); }
 };
-
 class ZPiece : public Piece {
 public:
     ZPiece() {
-        char s[4][4] = {
-            {' ',' ',' ',' '},{'Z','Z',' ',' '},
-            {' ','Z','Z',' '},{' ',' ',' ',' '}
-        };
+        char s[4][4] = {{' ',' ',' ',' '},{'Z','Z',' ',' '},{' ','Z','Z',' '},{' ',' ',' ',' '}};
         memcpy(shape, s, sizeof(s));
     }
     char symbol() override { return 'Z'; }
     void rotate() override { rotateClockwise(); }
 };
-
 class JPiece : public Piece {
 public:
     JPiece() {
-        char s[4][4] = {
-            {' ',' ',' ',' '},{'J',' ',' ',' '},
-            {'J','J','J',' '},{' ',' ',' ',' '}
-        };
+        char s[4][4] = {{' ',' ',' ',' '},{'J',' ',' ',' '},{'J','J','J',' '},{' ',' ',' ',' '}};
         memcpy(shape, s, sizeof(s));
     }
     char symbol() override { return 'J'; }
     void rotate() override { rotateClockwise(); }
 };
-
 class LPiece : public Piece {
 public:
     LPiece() {
-        char s[4][4] = {
-            {' ',' ',' ',' '},{' ',' ','L',' '},
-            {'L','L','L',' '},{' ',' ',' ',' '}
-        };
+        char s[4][4] = {{' ',' ',' ',' '},{' ',' ','L',' '},{'L','L','L',' '},{' ',' ',' ',' '}};
         memcpy(shape, s, sizeof(s));
     }
     char symbol() override { return 'L'; }
@@ -206,29 +133,31 @@ Piece* createRandomPiece() {
         default: return new LPiece();
     }
 }
-int x=4,y=0,b=1;
 
 void gotoxy(int x, int y) {
     COORD c = {(SHORT)x, (SHORT)y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
-void boardDelBlock(){
-    for (int i = 0 ; i < 4 ; i++)
-        for (int j = 0 ; j < 4 ; j++)
-            if (blocks[b][i][j] != ' ' && y+j < H)
-                board[y+i][x+j] = ' ';
+
+void boardDelBlock(Piece* p){
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            if (p->shape[i][j] != ' ' && p->y+i < H)
+                board[p->y+i][p->x+j] = ' ';
 }
-void block2Board(){
-    for (int i = 0 ; i < 4 ; i++)
-        for (int j = 0 ; j < 4 ; j++)
-            if (blocks[b][i][j] != ' ' )
-                board[y+i][x+j] = blocks[b][i][j];
+
+void block2Board(Piece* p){
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            if (p->shape[i][j] != ' ')
+                board[p->y+i][p->x+j] = p->shape[i][j];
 }
+
 void initBoard(){
     for (int i = 0 ; i < H ; i++)
         for (int j = 0 ; j < W ; j++)
-            if ((i==H-1) || (j==0) || (j == W-1)) board[i][j] = '#';
-            else board[i][j] = ' ';
+            if ((i==H-1)||(j==0)||(j==W-1)) board[i][j]='#';
+            else board[i][j]=' ';
 }
 void draw(){
     gotoxy(0,0);
@@ -239,49 +168,30 @@ void draw(){
             else                       cout<<(char)219<<(char)219;
         }
 }
-bool canMove(int dx, int dy){
-    for (int i = 0 ; i < 4 ; i++)
-        for (int j = 0 ; j < 4 ; j++)
-            if (blocks[b][i][j] != ' '){
-                int tx = x + j + dx;
-                int ty = y + i + dy;
-                if ( tx<1 || tx >= W-1 || ty >= H-1) return false;
-                if ( board[ty][tx] != ' ') return false;
+
+bool canMove(Piece* p, int dx, int dy){
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            if (p->shape[i][j] != ' '){
+                int tx=p->x+j+dx, ty=p->y+i+dy;
+                if (tx<1||tx>=W-1||ty>=H-1) return false;
+                if (board[ty][tx] != ' ')   return false;
             }
     return true;
 }
-void rotateBlock(){
-    char temp[4][4];
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            temp[j][3 - i] = blocks[b][i][j];
-    bool canRotate = true;
-    for (int i = 0; i < 4; i++){
-        for (int j = 0; j < 4; j++){
-            if (temp[i][j] != ' '){
-                int tx = x + j, ty = y + i;
-                if (tx<1||tx>=W-1||ty>=H-1||board[ty][tx]!=' ')
-                { canRotate = false; break; }
-            }
-        }
-        if (!canRotate) break;
-    }
-    if (canRotate)
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
-                blocks[b][i][j] = temp[i][j];
-}
+
+
 void removeLine() {
     int clearedThisTurn = 0;
-    for (int i = H - 2; i > 0; i--) {
+    for (int i = H-2; i > 0; i--) {
         int j;
-        for (j = 1; j < W - 1; j++)
+        for (j = 1; j < W-1; j++)
             if (board[i][j] == ' ') break;
-        if (j == W - 1) {
+        if (j == W-1) {
             clearedThisTurn++;
             for (int ii = i; ii > 0; ii--)
-                for (int col = 1; col < W - 1; col++)
-                    board[ii][col] = board[ii - 1][col];
+                for (int col = 1; col < W-1; col++)
+                    board[ii][col] = board[ii-1][col];
             i++;
         }
     }
@@ -295,28 +205,37 @@ void removeLine() {
 
 int main(){
     srand(time(0));
-    b = rand() % 7;
     system("cls");
     initBoard();
+
+    
+    Piece* current = createRandomPiece();
+
     while (1){
-        boardDelBlock();
+        boardDelBlock(current);
         if (kbhit()){
             char c = getch();
-            if (c=='a' && canMove(-1,0)) x--;
-            if (c=='d' && canMove(1,0) ) x++;
-            if (c=='x' && canMove(0,1))  y++;
-            if (c == 'w') rotateBlock();
+       
+            if (c=='a' && canMove(current,-1,0)) current->x--;
+            if (c=='d' && canMove(current, 1,0)) current->x++;
+            if (c=='x' && canMove(current, 0,1)) current->y++;
+           
+            if (c=='w'){ boardDelBlock(current); current->rotate(); }
             if (c=='q') break;
         }
-        if (canMove(0,1)) y++;
+        if (canMove(current,0,1)) current->y++;
         else {
-            block2Board();
+            block2Board(current);
             removeLine();
-            x = 5; y = 0; b = rand() % 7;
+         
+            delete current;
+            current = createRandomPiece();
         }
-        block2Board();
+        block2Board(current);
         draw();
         Sleep(Speed);
     }
+
+    delete current;
     return 0;
 }
