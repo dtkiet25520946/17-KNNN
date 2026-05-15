@@ -82,11 +82,8 @@ void UpdateSpeed(){
 
 int x=4,y=0,b=1;
 void gotoxy(int x, int y) {
-<<<<<<< HEAD
     COORD c = {(SHORT)x, (SHORT)y};
-=======
-    COORD c = {x, y};
->>>>>>> nhunguyet-tuan2
+
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 void boardDelBlock(){
