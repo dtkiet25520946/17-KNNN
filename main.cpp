@@ -177,15 +177,15 @@ void draw(){
 }
 
 void drawScoreAndControls(int score){ // Thông tin bao gồm (Điểm và bảng điều khiển)
-    // Diem
+    // Điểm
     gotoxy(W * 2 + 3, 1); cout << "SCORE: " << (lineCleared * 100) << "   ";
     gotoxy(W * 2 + 3, 2); cout << "LINES: " << lineCleared << "   ";
-    // Bang dieu khien
+    // Bảng điều khiển
     gotoxy(W * 2 + 3, 4); cout << "CONTROLS:";
     gotoxy(W * 2 + 3, 6); cout<<"A: Left    D: Right";
     gotoxy(W * 2 + 3, 7); cout<<"X: Down    W: Rotate";
     gotoxy(W * 2 + 3, 8); cout<<"    Q: Exit";
-    // Chuc nang
+    // Chức năng
     gotoxy(W * 2 + 3, 9); cout<<"Space: Hard Drop";
     gotoxy(W * 2 + 3, 10);
     if(score<500) cout<<"[LOCKED - 500]";
@@ -197,7 +197,7 @@ void drawNextPiece(Piece* next, int score) {
     gotoxy(W * 2 + 3, 12); cout << "NEXT PIECE:";
     
     if (score >= 1000) {
-        // Xóa dòng thông báo KHÓA cũ nếu có
+        // Xóa dòng Locked nếu đủ điểm
         gotoxy(W * 2 + 3, 13); cout << "                         "; 
         for (int i = 0; i < 4; i++) {
             gotoxy(W * 2 + 5, 13 + i);
@@ -207,9 +207,8 @@ void drawNextPiece(Piece* next, int score) {
             }
         }
     } else {
-        // Trạng thái khi người chơi chưa đạt đủ 1000 điểm
+        // Đủ điểm
         gotoxy(W * 2 + 3, 13); cout << "[LOCKED - NEED 1000 PTS]";
-        // Xóa khoảng trống bên dưới để tránh lỗi hiển thị đè ký tự
         for(int i = 1; i < 4; i++) { 
             gotoxy(W * 2 + 5, 13 + i); cout << "                  "; 
         }
