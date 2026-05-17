@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <conio.h>
 #include <ctime>
@@ -5,13 +6,14 @@
 using namespace std;
 #define H 20
 #define W 15
-int Speed = 200;
+int Speed = 80;
 int lineCleared = 0;
 char board[H][W] = {} ;
+char old_board[H][W] = {}; // Mảng lưu trạng thái cũ
 
 void UpdateSpeed(){
     Speed = Speed - (lineCleared * 3);
-    if(Speed<75) Speed = 75;
+    if(Speed<20) Speed = 20;
 }
 
 class Piece {
@@ -161,12 +163,24 @@ void initBoard(){
 }
 void draw(){
     gotoxy(0,0);
-    for (int i = 0 ; i < H ; i++, cout<<endl)
+    for (int i = 0 ; i < H ; i++, cout<<endl){
         for (int j = 0 ; j < W ; j++){
-            if(board[i][j]==' ')       cout<<"  ";
-            else if(board[i][j]=='#')  cout<<(char)178<<(char)178;
-            else                       cout<<(char)219<<(char)219;
+            if(board[i][j] != old_board[i][j]){
+                // Chỉ vẽ lại khi ô có thay đổi
+                gotoxy(j*2, i);
+                if(board[i][j]==' ')       cout<<"  ";
+                else if(board[i][j]=='#')  cout<<(char)178<<(char)178;
+                else                       cout<<(char)219<<(char)219;
+            }
         }
+    }
+    // Thông tin bao gồm (Điểm và bảng điều khiển)
+    gotoxy(W * 2 + 3, 1); cout << "SCORE: " << (lineCleared * 100) << "   ";
+    gotoxy(W * 2 + 3, 2); cout << "LINES: " << lineCleared << "   ";
+    gotoxy(W * 2 + 3, 4); cout << "CONTROLS:";
+    gotoxy(W * 2 + 3, 6); cout<<"A: Left    D: Right";
+    gotoxy(W * 2 + 3, 8); cout<<"X: Down    W: Rotate";
+    gotoxy(W * 2 + 3, 10); cout<<"    Q: Exit";
 }
 
 bool canMove(Piece* p, int dx, int dy){
@@ -199,7 +213,7 @@ void removeLine() {
         lineCleared += clearedThisTurn;
         UpdateSpeed();
         draw();
-        Sleep(200);
+        Sleep(10);
     }
 }
 
@@ -208,11 +222,13 @@ int main(){
     system("cls");
     initBoard();
 
-    
-    Piece* current = createRandomPiece();
+    Piece* current = createRandomPiece(); // Chọn piece
+    int fallTimer = 0; // Đếm thời gian rơi
 
     while (1){
         boardDelBlock(current);
+        
+        // Bắt phím liên tục (Mượt mà, không bị delay)
         if (kbhit()){
             char c = getch();
        
@@ -222,20 +238,35 @@ int main(){
            
             if (c=='w'){ boardDelBlock(current); current->rotate(); }
             if (c=='q') break;
+            if (c=='q') { delete current; break; }
         }
-        if (canMove(current,0,1)) current->y++;
-        else {
-            block2Board(current);
-            removeLine();
-         
-            delete current;
-            current = createRandomPiece();
+        // Xử lý rơi tự động 
+        fallTimer += 10; // sau mỗi 10ms, cộng dồn
+        if (fallTimer >= Speed) { // Khi đủ frame, piece bắt đầu rơi
+            if (canMove(current,0,1)) {
+                current->y++;
+            } else {
+                // chạm đáy
+                block2Board(current);
+                removeLine();
+                delete current;
+                current = createRandomPiece();
+                
+                // Thua game
+                if (!canMove(current, 0, 0)) {
+                    gotoxy(0, H + 1);
+                    cout << "GAME OVER!" << endl;
+                    delete current;
+                    break;
+                }
+            }
+            fallTimer = 0; // Reset bộ đếm rơi
         }
+        
         block2Board(current);
         draw();
-        Sleep(Speed);
+        Sleep(10);
     }
 
-    delete current;
     return 0;
 }
