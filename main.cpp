@@ -13,7 +13,7 @@ char old_board[H][W] = {}; // Mảng lưu trạng thái cũ
 
 void UpdateSpeed(){
     Speed = Speed - (lineCleared * 3);
-    if(Speed<20) Speed = 20;
+    if(Speed<30) Speed = 30;
 }
 
 class Piece {
@@ -174,13 +174,47 @@ void draw(){
             }
         }
     }
-    // Thông tin bao gồm (Điểm và bảng điều khiển)
+}
+
+void drawScoreAndControls(int score){ // Thông tin bao gồm (Điểm và bảng điều khiển)
+    // Diem
     gotoxy(W * 2 + 3, 1); cout << "SCORE: " << (lineCleared * 100) << "   ";
     gotoxy(W * 2 + 3, 2); cout << "LINES: " << lineCleared << "   ";
+    // Bang dieu khien
     gotoxy(W * 2 + 3, 4); cout << "CONTROLS:";
     gotoxy(W * 2 + 3, 6); cout<<"A: Left    D: Right";
-    gotoxy(W * 2 + 3, 8); cout<<"X: Down    W: Rotate";
-    gotoxy(W * 2 + 3, 10); cout<<"    Q: Exit";
+    gotoxy(W * 2 + 3, 7); cout<<"X: Down    W: Rotate";
+    gotoxy(W * 2 + 3, 8); cout<<"    Q: Exit";
+    // Chuc nang
+    gotoxy(W * 2 + 3, 9); cout<<"Space: Hard Drop";
+    gotoxy(W * 2 + 3, 10);
+    if(score<500) cout<<"[LOCKED - 500]";
+    else cout<<"  -UNLOCKED-  ";
+}
+
+void drawNextPiece(Piece* next, int score) {
+    gotoxy(W * 2 + 3, 11); cout << "--------------------";
+    gotoxy(W * 2 + 3, 12); cout << "NEXT PIECE:";
+    
+    if (score >= 1000) {
+        // Xóa dòng thông báo KHÓA cũ nếu có
+        gotoxy(W * 2 + 3, 13); cout << "                         "; 
+        for (int i = 0; i < 4; i++) {
+            gotoxy(W * 2 + 5, 13 + i);
+            for (int j = 0; j < 4; j++) {
+                if (next->shape[i][j] != ' ') cout << (char)219 << (char)219;
+                else cout << "  ";
+            }
+        }
+    } else {
+        // Trạng thái khi người chơi chưa đạt đủ 1000 điểm
+        gotoxy(W * 2 + 3, 13); cout << "[LOCKED - NEED 1000 PTS]";
+        // Xóa khoảng trống bên dưới để tránh lỗi hiển thị đè ký tự
+        for(int i = 1; i < 4; i++) { 
+            gotoxy(W * 2 + 5, 13 + i); cout << "                  "; 
+        }
+    }
+    gotoxy(W * 2 + 3, 17); cout << "--------------------";
 }
 
 bool canMove(Piece* p, int dx, int dy){
@@ -240,6 +274,7 @@ int main(){
     initBoard();
 
     Piece* current = createRandomPiece(); // Chọn piece
+    Piece* next = createRandomPiece(); // Chọn piece kế tiếp (chỉ phục vụ tính năng)
     int fallTimer = 0; // Đếm thời gian rơi
 
     while (1){
@@ -251,9 +286,14 @@ int main(){
             if (c=='a' && canMove(current,-1,0)) current->x--;
             if (c=='d' && canMove(current, 1,0)) current->x++;
             if (c=='x' && canMove(current, 0,1)) current->y++;
-           
             if (c=='w'){ boardDelBlock(current); current->rotate(); }
-            if (c=='q') { delete current; break; }
+            if (c=='q'){ delete current; break; }
+            if (c=='e'){ lineCleared++; UpdateSpeed();} // Tool
+            // Hard drop
+            if (c==' ' && lineCleared*100 >= 500){
+                while(canMove(current, 0, 1)){current->y++;}
+                fallTimer = Speed;
+            }
         }
         // Xử lý rơi tự động 
         fallTimer += 10; // sau mỗi 10ms, cộng dồn
@@ -265,8 +305,12 @@ int main(){
                 block2Board(current);
                 removeLine();
                 delete current;
-                current = createRandomPiece();
-                
+                // Next Piece
+                if(lineCleared*100 >= 1000){
+                    current = next;
+                    next = createRandomPiece();
+                }
+                else{current = createRandomPiece();}
                 // Thua game
                 if (!canMove(current, 0, 0)) {
                     delete current;
@@ -279,6 +323,8 @@ int main(){
         
         block2Board(current);
         draw();
+        drawScoreAndControls(lineCleared * 100);
+        drawNextPiece(next, lineCleared*100);
         Sleep(10);
     }
 
