@@ -217,6 +217,23 @@ void removeLine() {
     }
 }
 
+void gameover(){
+    system("cls");
+
+    int startY = H/2 - 3;
+    int startX = (W*2) / 4;
+
+    gotoxy(startX, startY);     cout << "=============================";
+    gotoxy(startX, startY + 2); cout << "*        GAME OVER          *";
+    gotoxy(startX, startY + 4); cout << "=============================";
+    
+    gotoxy(startX, startY + 5); cout << "  Score: " << (lineCleared * 100);
+    gotoxy(startX, startY + 6); cout << "  Lines Cleared: " << lineCleared;
+    
+    gotoxy(startX, startY + 8); cout << "Bam bat ky phim nao de thoat.";
+    getch();
+}
+
 int main(){
     srand(time(0));
     system("cls");
@@ -228,7 +245,6 @@ int main(){
     while (1){
         boardDelBlock(current);
         
-        // Bắt phím liên tục (Mượt mà, không bị delay)
         if (kbhit()){
             char c = getch();
        
@@ -237,7 +253,6 @@ int main(){
             if (c=='x' && canMove(current, 0,1)) current->y++;
            
             if (c=='w'){ boardDelBlock(current); current->rotate(); }
-            if (c=='q') break;
             if (c=='q') { delete current; break; }
         }
         // Xử lý rơi tự động 
@@ -254,9 +269,8 @@ int main(){
                 
                 // Thua game
                 if (!canMove(current, 0, 0)) {
-                    gotoxy(0, H + 1);
-                    cout << "GAME OVER!" << endl;
                     delete current;
+                    gameover();
                     break;
                 }
             }
