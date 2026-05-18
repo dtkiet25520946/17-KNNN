@@ -6,7 +6,7 @@
 using namespace std;
 #define H 20
 #define W 15
-int Speed = 80;
+int Speed = 600;// tăng mốc thời gian
 int lineCleared = 0;
 char board[H][W] = {} ;
 char old_board[H][W] = {}; // Mảng lưu trạng thái cũ
@@ -301,7 +301,7 @@ int main(){
     Piece* current = createRandomPiece(); // Chọn piece
     Piece* next = createRandomPiece(); // Chọn piece kế tiếp (chỉ phục vụ tính năng)
     int fallTimer = 0; // Đếm thời gian rơi
-
+    bool isSoftDrop = false;//trạng thái rơi(true = nhanh, false = bình thường)
     while (1){
         boardDelBlock(current);
 
@@ -310,18 +310,23 @@ int main(){
 
             if (c=='a' && canMove(current,-1,0)) current->x--;
             if (c=='d' && canMove(current, 1,0)) current->x++;
-            if (c=='x' && canMove(current, 0,1)) current->y++;
+            if (c=='x' && canMove(current, 0,1)){ isSoftDrop = true; }// trạng thái rơi chuyển thành rơi nhanh
             if (c=='w'){ boardDelBlock(current); current->rotate(); }
             if (c=='q'){ delete current; break; }
             if (c=='e'){ lineCleared++; UpdateSpeed();} // Tool
             // Hard drop
             if (c==' ' && lineCleared*100 >= 500){
                 while(canMove(current, 0, 1)){current->y++;}
-                fallTimer = Speed;
+                fallTimer = 0;
+                isSoftDrop = false; // chuyển về trạng thái bình thường cho gạch tiếp theo
             }
         }
+        if (isSoftDrop) {
+            fallTimer += 50; // Nếu đang bật chế độ rơi nhanh, cộng 50 để gạch tăng tốc dịch xuống
+        } else { // rơi bình thường
         // Xử lý rơi tự động
         fallTimer += 10; // sau mỗi 10ms, cộng dồn
+        }
         if (fallTimer >= Speed) { // Khi đủ frame, piece bắt đầu rơi
             if (canMove(current,0,1)) {
                 current->y++;
@@ -330,6 +335,7 @@ int main(){
                 block2Board(current);
                 removeLine();
                 delete current;
+                isSoftDrop = false;// chuyển sang trạng thái bình thường cho gạch tiếp theo
                 // Next Piece
                 if(lineCleared*100 >= 1000){
                     current = next;
@@ -344,8 +350,8 @@ int main(){
                 }
             }
             fallTimer = 0; // Reset bộ đếm rơi
-        }
 
+        }
         block2Board(current);
         draw();
         drawScoreAndControls(lineCleared * 100);
