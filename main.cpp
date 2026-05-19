@@ -12,8 +12,8 @@ char board[H][W] = {} ;
 char old_board[H][W] = {}; // Mảng lưu trạng thái cũ
 
 void UpdateSpeed(){
-    Speed = Speed - (lineCleared * 3);
-    if(Speed<30) Speed = 30;
+    Speed = Speed - (lineCleared * 20);
+    if(Speed<100) Speed = 100;
 }
 
 class Piece {
