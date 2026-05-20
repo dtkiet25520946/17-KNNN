@@ -210,7 +210,7 @@ void drawScoreAndControls(int score){ // Thông tin bao gồm (Điểm và bản
     gotoxy(W * 2 + 3, 4); cout << "CONTROLS:";
     gotoxy(W * 2 + 3, 6); cout<<"A: Left    D: Right";
     gotoxy(W * 2 + 3, 7); cout<<"X: Down    W: Rotate";
-    gotoxy(W * 2 + 3, 8); cout<<"    Q: Exit";
+    gotoxy(W * 2 + 3, 8); cout<<"P: Pause   Q: Exit";
     // Chức năng
     gotoxy(W * 2 + 3, 9); cout<<"Space: Hard Drop";
     gotoxy(W * 2 + 3, 10);
@@ -240,6 +240,19 @@ void drawNextPiece(Piece* next, int score) {
         }
     }
     gotoxy(W * 2 + 3, 17); cout << "--------------------";
+}
+void pauseGame() {
+    int px = W*2+3;
+    gotoxy(px, 19); setColor(14); cout << "*** PAUSED ***";
+    setColor(7);
+    while (true) {
+        if (kbhit()) {
+            char c = getch();
+            if (c == 'p' || c == 'P') break;
+        }
+        Sleep(50);
+    }
+    gotoxy(px, 19); cout << "              "; // Xoa chu PAUSED
 }
 
 bool canMove(Piece* p, int dx, int dy){
@@ -313,6 +326,7 @@ int main(){
             if (c=='x' && canMove(current, 0,1)){ isSoftDrop = true; }// trạng thái rơi chuyển thành rơi nhanh
             if (c=='w'){ boardDelBlock(current); current->rotate(); }
             if (c=='q'){ delete current; break; }
+            if (c=='p' || c=='P') pauseGame();
             if (c=='e'){ lineCleared++; UpdateSpeed();} // Tool
             // Hard drop
             if (c==' ' && lineCleared*100 >= 500){
